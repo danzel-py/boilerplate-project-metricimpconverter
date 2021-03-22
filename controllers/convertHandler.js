@@ -12,12 +12,26 @@ function ConvertHandler() {
     let decimalValid = /([.][0-9]+)/g
 
     let invalidSymbols = /([^0-9./A-z])/g
+    let numBefore = /([0-9]+[^0-9])/g
+    let numExist = /([0-9./])/g
+    let letterBetween = /([0-9./][A-z]+[0-9./])/
 
     // invalid symbols
     if (input.match(invalidSymbols) !== null) {
-      result = 'err'
+      return 'err'
     }
     // no invalid symbols
+    else if(input.match(numBefore) === null){
+      if (input.match(numExist) === null){
+        return 1
+      }
+      else{
+        return input.match(numExist)   // num only no unit
+      }
+    }
+    else if(input.match(letterBetween) !== null){
+      return 'err'
+    }
     else {
       // no fraction
       if (input.match(fractionCheck) === null) {
@@ -31,7 +45,7 @@ function ConvertHandler() {
         }
         // invalid decimal
         else {
-          result = 'err'
+          return 'err'
         }
       }
       // one fraction
@@ -46,14 +60,18 @@ function ConvertHandler() {
         }
         // invalid decimal
         else {
-          result = 'err'
+          return 'err'
         }
       }
       // invalid fraction
       else {
-        result = 'err'
+        return 'err'
       }
     }
+
+    if(result)
+
+    result = eval(result.toFixed(5))
 
     return result;
   };
@@ -62,32 +80,39 @@ function ConvertHandler() {
     let result;
     let regex = /[a-z].*/
     let inputUpper = input.toLowerCase()
+    if(inputUpper.match(regex) === null){
+      return 'err'
+    }
+    else{
     let unit = inputUpper.match(regex)[0]
 
-    switch(unit){
-      case 'gal':
-        result = unit
-        break
-      case 'l':
-        result = 'L'
-        break
-      case 'mi':
-        result = unit
-        break
-      case 'km':
-        result = unit
-        break
-      case 'lbs':
-        result = unit
-        break
-      case 'kg':
-        result = unit
-        break
-      default:
-        result = 'err'
-        break
-    }
-    return result;
+
+      
+      switch(unit){
+        case 'gal':
+          result = unit
+          break
+          case 'l':
+            result = 'L'
+            break
+            case 'mi':
+              result = unit
+              break
+              case 'km':
+                result = unit
+                break
+                case 'lbs':
+                  result = unit
+                  break
+                  case 'kg':
+                    result = unit
+                    break
+                    default:
+                      result = 'err'
+                      break
+                    }
+                    return result;
+                  }
   };
 
   this.getReturnUnit = function (initUnit) {
@@ -174,9 +199,11 @@ function ConvertHandler() {
         result = initNum/lbsToKg
         break
       default:
-        result = 'err'
-        break
+        return 'err'
     }
+
+    result = eval(result.toFixed(5))
+
 
     return result;
   };
@@ -184,13 +211,30 @@ function ConvertHandler() {
   this.getString = function (initNum, initUnit, returnNum, returnUnit) {
     let result;
 
-    result = {
-      initNum: initNum,
-      initUnit: initUnit,
-      returnNum: returnNum,
-      returnUnit: returnUnit,
-      strings: `${initNum} ${this.spellOutUnit(initUnit)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`
+    if(initUnit === 'err'){
+      if(initNum === 'err'){
+        return 'invalid number and unit'
+      }
+      else{
+        return 'invalid unit'
+      }
     }
+    else{
+      if (initNum === 'err'){
+        return 'invalid number'
+      }
+      else{
+        result = {
+          initNum: initNum,
+          initUnit: initUnit,
+          returnNum: returnNum,
+          returnUnit: returnUnit,
+          string: `${initNum} ${this.spellOutUnit(initUnit)} converts to ${returnNum} ${this.spellOutUnit(returnUnit)}`
+        }
+      }
+    }
+
+    
 
     return result;
   };
